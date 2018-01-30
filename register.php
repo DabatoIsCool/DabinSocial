@@ -1,6 +1,12 @@
 <?php
 include_once "php/init.php";
 
+if($_SESSION["signed_in"] == 1)
+{
+    header('Location: dashboard.php');
+    die();
+}
+
 if(isset($_POST['email']) && isset($_POST['pwd']) && isset($_POST['username']))
 {
     $email = $_POST['email'];
@@ -41,12 +47,10 @@ if(isset($_POST['email']) && isset($_POST['pwd']) && isset($_POST['username']))
                                             VALUES (?, ?, ?)");
                     if($stmt)
                     {
-                        $options = array(
-                            'cost' => 12,
-                        );
+                        
 
-                        /*$hashedpass = password_hash($password, PASSWORD_BCRYPT, $options);*/
-                        $stmt->bind_param('sss', $email, $username, $password);
+                        $hashedpass = password_hash($pwd, PASSWORD_DEFAULT);
+                        $stmt->bind_param('sss', $email, $username, $hashedpass);
                         $stmt->execute();
 
                         echo "Success creating your account!";

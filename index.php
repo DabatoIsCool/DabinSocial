@@ -1,3 +1,9 @@
+<?php
+
+include_once "php/init.php";
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -20,8 +26,8 @@
                 <h1 class="display-3">Welcome to DabinSocial!</h1>
                 <p class="lead">Please either:</p>
             </div>
-            <a href="login.html" class="btn btn-secondary btn-lg btn-block active" role="button" aria-pressed="true">Login</a>
-            <a href="register.html" class="btn btn-secondary btn-lg btn-block active" role="button" aria-pressed="true">Register</a>
+            <a href="login.php" class="btn btn-secondary btn-lg btn-block active" role="button" aria-pressed="true">Login</a>
+            <a href="register.php" class="btn btn-secondary btn-lg btn-block active" role="button" aria-pressed="true">Register</a>
         </div>
 
         <footer>

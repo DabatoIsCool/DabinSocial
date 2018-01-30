@@ -1,42 +1,74 @@
 <?php
 include_once "php/init.php";
 
+if($_SESSION['signed_in'] == 1)
+{
+    header('Location: dashboard.php');
+    die();
+}
+
+function get_values_from_db($result)
+{
+    while($row = $result->fetch_assoc())
+    {
+        $password_from_db = $row['password'];
+        $username = $row['username'];
+        $id = $row['id'];
+    }
+
+    $values = array($password_from_db, $username, $id);
+
+    return $values;
+}
+
+function login_was_successful($values, $email)
+{
+    $_SESSION['user_id'] = $values[2];
+    $_SESSION['signed_in'] = 1;
+    $_SESSION['username'] = $values[1];
+    $_SESSION['email'] = $email;
+
+    header("Location: dashboard.php");
+    die();
+}
+
+function login_was_not_successful()
+{
+    echo "Incorrect email/password";
+}
+
+function stmt_was_valid($stmt, $email, $pwd)
+{
+    $stmt->bind_param('s', $email);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+
+    $values = get_values_from_db($result);
+
+    if(password_verify($pwd, $values[0]))
+    {
+        login_was_successful($values, $email);
+    }
+    else
+    {
+        login_was_not_successful();
+    }
+}
+
 if(isset($_POST['email']) && isset($_POST['pwd']))
 {
     $email = $_POST['email'];
     $pwd = $_POST['pwd'];
-
     $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+
     if($stmt)
     {
-        $stmt->bind_param('s', $email);
-
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-
-        $password = "";
-        $username = "";
-        $id = "";
-        while($row = $result->fetch_assoc())
-        {
-            $password = $row['password'];
-            $username = $row['username'];
-            $id = $row['id'];
-        }
-
-        if(password_verify($pwd, $password))
-        {
-            echo "Success! ID: " . $id . " Username: " . $username;
-        }
-        else
-        {
-            echo "Incorrect password";
-        }
+        stmt_was_valid($stmt, $email, $pwd);
     }
     else
     {
-        echo "Email does not match any in our records!";
+        login_was_not_successful();
     }
 }
 
