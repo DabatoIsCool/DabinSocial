@@ -1,2 +1,2 @@
 # DabinSocial
-Best social network kek kek kek
+Best social network
